@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Engine</title>
+<script src="draft.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(
+  287.56deg,
+  rgba(30, 233, 221, 0.7099999785) 100%,
+  rgba(72, 255, 244, 0.6979166865) 128.13%,
+  rgba(98, 255, 245, 0.4235678911) 142.19%,
+  rgba(91, 255, 245, 0.4010416865)
+);
+
+  }
+  header {
+    background-color: rgba(255, 255, 255, 0.1899999976);
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer{
+    background: linear-gradient(287.56deg, rgba(30, 233, 221, 0.7099999785) 100%, rgba(72, 255, 244, 0.6979166865) 128.13%, rgba(98, 255, 245, 0.4235678911) 142.19%, rgba(91, 255, 245, 0.4010416865) 154.17%, rgba(110, 255, 246, 0.4637933075) 174.48%, rgba(40, 238, 226, 0.5799999833) 200%);
+  }
+  .logo {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  cursor: pointer;
+}
+
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Optional: Add styles for hover effect */
+.logo:hover {
+  opacity: 0.7;
+}
+
+
+  .search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-input {
+  padding: 10px 40px 10px 10px; /* Added padding on the right for the icon */
+  width: 400px;
+  font-size: 16px;
+  outline: none;
+  background-color: #ffffff;
+  border-radius: 5rem;
+  box-shadow: inset 0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(30, 233, 221, 0.71);
+  /* Added background image */
+  background-image: url('iconbut.png');
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Adjusted position */
+  background-size: 20px; /* Adjusted size */
+  margin-bottom:15px;
+}
+
+.search-button {
+  display: inline-block;
+  padding: 10px 20px;
+  color: #00867e;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: solid 0.1rem rgba(0, 134, 126, 0.38);
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  margin-top: 10px; 
+  margin-bottom:95px;/* Adjust this value as needed */
+}
+
+  .popular-searches {
+    color: black;
+    font-family: Roboto, 'Source Sans Pro';
+    margin-top: 50px;
+    text-align: center;
+  }
+  .rect-searches {
+    color: black;
+    font-family: Roboto, 'Source Sans Pro';
+    margin-top: 50px;
+    text-align: center;
+  }
+  .popular-searches h2 {
+    margin-bottom: 20px;
+  }
+  .popular-links {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  .popular-links a {
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: #1a0dab;
+    font-family: Roboto, 'Source Sans Pro';
+    text-decoration-line: underline;
+  }
+  .popular-links a:hover {
+    background-color: #504029;
+    color: white;
+  }
+  .buttonContainer {
+    display: flex;
+    flex-direction: column;
+    width:100px;;
+}
+
+.button {
+    display: block;
+    margin: 5px;
+    padding: 5px 10px; /* Adjust padding to make buttons smaller */
+    font-size: 12px; /* Adjust font size to make buttons smaller */
+    width: auto;
+}
+
+.search-icon {
+  width: auto; /* Adjust the size as needed */
+  height: auto;
+  margin-top: 75px; 
+  margin-right: 10px; 
+  margin-bottom: 15px; /* Space between icon and input */
+}
+.bookmark-button button {
+  background-image: url('bookmarks.png');
+  background-size: contain; /* Image will fit entirely inside the button */
+  background-color: rgba(255, 255, 255, 0.1899999976);
+  width: 30px; /* Set the width of the button */
+  height: 40px; /* Set the height of the button */
+  border: none; /* Remove default button borders */
+  padding: 0; /* Remove any default padding */
+  cursor: pointer; /* Show pointer cursor on hover */
+}
+
+/* Optional: Add hover effect */
+.bookmark-button button:hover {
+  opacity: 0.8; /* Adjust opacity on hover */
+}
+
+.indexButton {
+    display: block;
+    margin: 5px;
+    padding: 5px 10px; /* Adjust padding to make buttons smaller */
+    font-size: 12px; /* Adjust font size to make buttons smaller */
+    width: auto;  
+      background-color: white; /* Green */
+      border-radius: 12px;
+}
+
+#content {
+    margin-top: 20px;
+}
+
+.container {
+        display: grid;
+        grid-template-columns: 15% 85%; /* Set the width for each column */
+        gap: 10px; /* Adjust the gap between columns */
+}
+
+.div1, .div2 {
+    /* Adjust styles as needed */
+            padding: 20px;
+        background-color: #27d6cc;
+        display: grid;
+    place-items: center;
+}
+
+#navigationButtons {
+      margin-top: 15px;
+}
+
+
+
+#links {
+  /* Center the links div */
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.admin-button {
+  display: inline-block;
+  position: relative;
+}
+
+.admin-button button {
+  width: 20px; /* Adjust as needed */
+  height: 20px; /* Adjust as needed */
+  background-image: url('Admin.jpg'); /* Path to your image */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+}
+
+/* Optional: Adjust button styling */
+.admin-button button:hover {
+  opacity: 0.8;
+}
+.scrollable {
+        max-height: 300px; /* Adjust the max height as needed */
+        overflow-y: auto;
+    }
+</style>
+</head>
+<body>
+  <header>
+    <div class="bookmark-button">
+      <button></button>
+    </div>
+    <div class="admin-button">
+      <button id="admin"></button>
+    </div>
+      <div class="logo" onclick="backToHomepage()">
+        <img src="home.png" alt="Back Button" width="50" height="50">
+      </div></div>
+  </header>
+  <div id="content"></div>
+</body>
+</html>
+
+
